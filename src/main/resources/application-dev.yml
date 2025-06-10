@@ -1,0 +1,19 @@
+spring:
+  datasource:
+   url: jdbc:postgresql://localhost:5432/book_social_network
+   username: tavi
+   password: 1234 
+   driver-class-name: org.postgresql.Driver	 
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    propreties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: localhost
+    username: tavi
+    password: tavi  

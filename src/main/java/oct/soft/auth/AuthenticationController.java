@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +20,7 @@ public class AuthenticationController {
 	private final AuthenticationService service;
 
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody @Valid RegistrationRequest regReq) {
+	public ResponseEntity<?> register(@RequestBody @Valid RegistrationRequest regReq) throws MessagingException {
 		service.register(regReq);
 		return ResponseEntity.accepted().build();
 	}

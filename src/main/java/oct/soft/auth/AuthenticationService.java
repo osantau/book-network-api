@@ -37,7 +37,7 @@ public class AuthenticationService {
 				.orElseThrow(() -> new IllegalStateException("ROLE USER was not initialized !"));
 		var user = User.builder().firstName(regReq.getFirstName()).lastName(regReq.getLastName())
 				.email(regReq.getEmail()).password(passwordEncoder.encode(regReq.getPassword())).accountLocked(false)
-				.enabled(true).roles(List.of(userRole)).build();
+				.enabled(false).roles(List.of(userRole)).build();
 		userRepo.save(user);
 		sendValidatonEmail(user);
 	}

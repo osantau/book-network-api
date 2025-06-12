@@ -21,12 +21,15 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import oct.soft.book.Book;
+import oct.soft.history.BookTransactionHistory;
 import oct.soft.role.Role;
 
 @Getter
@@ -55,6 +58,9 @@ public class User implements UserDetails, Principal {
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Role> roles;
 
+	@OneToMany(mappedBy = "owner")
+	private List<Book> books;
+
 	@CreatedDate
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdDate;
@@ -62,14 +68,13 @@ public class User implements UserDetails, Principal {
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
 
+	@OneToMany(mappedBy = "user")
+	private List<BookTransactionHistory> histories;
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.roles
-				.stream()
-				.map(r-> new SimpleGrantedAuthority(r.getName()))
-				.collect(Collectors.toList())
-				;
-		
+		return this.roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+
 	}
 
 	@Override

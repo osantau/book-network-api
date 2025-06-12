@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 import oct.soft.common.BaseEntity;
 import oct.soft.feedback.Feedback;
 import oct.soft.history.BookTransactionHistory;
-import oct.soft.user.User;  
+import oct.soft.user.User;
 
 @Getter
 @Setter
@@ -24,9 +25,8 @@ import oct.soft.user.User;
 @NoArgsConstructor
 @Entity
 
-public class Book extends BaseEntity{
+public class Book extends BaseEntity {
 
-	
 	private String title;
 	private String authorName;
 	private String isbn;
@@ -34,14 +34,25 @@ public class Book extends BaseEntity{
 	private String bookCover;
 	private boolean archived;
 	private boolean shareable;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "owner_id")
 	private User owner;
-	
+
 	@OneToMany(mappedBy = "book")
 	private List<Feedback> feedbacks;
-	
+
 	@OneToMany(mappedBy = "book")
-	private List<BookTransactionHistory> histories ;
+	private List<BookTransactionHistory> histories;
+
+	@Transient
+	public double getRate() {
+		if (feedbacks == null || feedbacks.isEmpty()) {
+			return 0.0;
+		}
+
+		var rate = this.feedbacks.stream().mapToDouble(Feedback::getNote).average().orElse(0.0);
+
+		return Math.round(rate * 10.0) / 10.0;
+	}
 }

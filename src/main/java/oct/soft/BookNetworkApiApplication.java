@@ -11,7 +11,7 @@ import oct.soft.role.Role;
 import oct.soft.role.RoleRepository;
 
 @SpringBootApplication
-@EnableJpaAuditing
+@EnableJpaAuditing(auditorAwareRef = "auditorAware")
 @EnableAsync
 public class BookNetworkApiApplication {
 

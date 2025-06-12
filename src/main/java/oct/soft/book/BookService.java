@@ -2,6 +2,7 @@ package oct.soft.book;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -113,25 +114,46 @@ public class BookService {
 	public Long borrowBook(Long bookId, Authentication connectedUser) {
 		Book book = bookRepository.findById(bookId)
 				.orElseThrow(() -> new EntityNotFoundException("No book found with id:: " + bookId));
-		
-		if(book.isArchived() || !book.isShareable())
-		{
+
+		if (book.isArchived() || !book.isShareable()) {
 			throw new OperationNotPermittedException("Book cannot be borrowd since it is archived or not shareable");
 		}
-		
+
 		User user = ((User) connectedUser.getPrincipal());
-		
+
 		if (Objects.equals(book.getOwner().getId(), user.getId())) {
 			throw new OperationNotPermittedException("You cannot borrow your own book");
 		}
-		
+
 		final boolean isAlreadyBorrowed = historyRepo.isAlreadyBorrowed(bookId, user.getId());
-		if(isAlreadyBorrowed)
-		{
+		if (isAlreadyBorrowed) {
 			throw new OperationNotPermittedException("The requested book is alreadt borrowed");
 		}
+		BookTransactionHistory bookTransactionHistory = BookTransactionHistory.builder().user(user).book(book)
+				.returned(false).returnedApproved(false).build();
+		return historyRepo.save(bookTransactionHistory).getId();
+
+	}
+
+	public Long returnBorrowedBook(Long bookId, Authentication connectedUser) {
+		Book book = bookRepository.findById(bookId)
+				.orElseThrow(() -> new EntityNotFoundException("No book found with id:: " + bookId));
+		if (book.isArchived() || !book.isShareable()) {
+			throw new OperationNotPermittedException("Book cannot be borrowd since it is archived or not shareable");
+		}
+
+		User user = ((User) connectedUser.getPrincipal());
+
+		if (Objects.equals(book.getOwner().getId(), user.getId())) {
+			throw new OperationNotPermittedException("You cannot borrow or return your own book");
+		}
 		
-		return bookId;
+		BookTransactionHistory bookTransactionHistory = historyRepo.findByBookIdAndUserId(bookId, user.getId()).orElseThrow(()->
+		 new OperationNotPermittedException("You did not borrow this book")); 		
+		
+		bookTransactionHistory.setReturned(true);
+		
+		return historyRepo.save(bookTransactionHistory).getId();
 	}
 
 }

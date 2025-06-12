@@ -20,4 +20,12 @@ public interface BookTransactionHistoryRepository
 			WHERE history.book.createdBy = :userId
 			""")
 	Page<BookTransactionHistory> findAllReturnedBooks(Pageable pageable, Long userId);
+
+	@Query(""" 
+			SELECT (count(*) > 0) as isBorrowed FROM BookTransactionHistory history 
+			WHERE history.user.id = :userId 
+			AND history.book.id=:bookId 
+			AND history.returnApproved=false
+			""")
+	boolean isAlreadyBorrowed(Long bookId, Long userId);
 }

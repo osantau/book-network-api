@@ -3,6 +3,7 @@ package oct.soft.book;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,6 +64,22 @@ public class BookController {
 		return ResponseEntity.ok(bookService.findAllReturnedBooks(page, size, connectedUser));
 	}
 	
+	@PatchMapping("/shareable/{book-id}")
+	public ResponseEntity<Long> updateShareableStatus(@PathVariable(name = "book-id") Long bookId, Authentication connectedUser)
+	{
+		return ResponseEntity.ok(bookService.updateShareableStatus(bookId, connectedUser));
+	}
 	
+	@PatchMapping("/archive/{book-id}")
+	public ResponseEntity<Long> updateArchiveStatus(@PathVariable(name = "book-id") Long bookId, Authentication connectedUser)
+	{
+		return ResponseEntity.ok(bookService.updateArchivedStatus(bookId, connectedUser));
+	}
+	
+	@PostMapping("/borrow/{book-id}")
+	public ResponseEntity<Long> borrowBook(@PathVariable(name = "book-id") Long bookId, Authentication connectedUser)
+	{
+		return ResponseEntity.ok(bookService.borrowBook(bookId, connectedUser));
+	}
 	
 }

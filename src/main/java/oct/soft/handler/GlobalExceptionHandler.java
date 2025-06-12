@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.mail.MessagingException;
+import oct.soft.exception.OperationNotPermittedException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -64,9 +65,16 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionResponse> handleException(Exception ex) {
 		// log the exception in console
-		ex.printStackTrace(); 
+		ex.printStackTrace();
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ExceptionResponse.builder()
 				.businessErrorDescription("Internal error, contact admin").error(ex.getMessage()).build());
+
+	}
+
+	@ExceptionHandler(OperationNotPermittedException.class)
+	public ResponseEntity<ExceptionResponse> handleException(OperationNotPermittedException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(ExceptionResponse.builder().error(ex.getMessage()).build());
 
 	}
 }

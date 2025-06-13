@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
+import oct.soft.book.Book;
+
 public interface BookTransactionHistoryRepository
 		extends JpaRepository<BookTransactionHistory, Long>, JpaSpecificationExecutor<BookTransactionHistory> {
 
@@ -38,5 +40,14 @@ public interface BookTransactionHistoryRepository
 			AND transaction.returned=false 
 			AND transaction.returnedApproved=false
 			""")
-	Optional<BookTransactionHistory> findByBookIdAndUserId(Long bookId, Long id);
+	Optional<BookTransactionHistory> findByBookIdAndUserId(Long bookId, Long userIsd);
+
+	@Query("""
+			SELECT transaction FROM BookTransactionHistory transaction
+			WHERE transaction.book.owner.id = :userId
+			AND transaction.book.id=:bookId
+			AND transaction.returned=true 
+			AND transaction.returnedApproved=false
+			""")
+	Optional<BookTransactionHistory> findByBookIdAndOwnerId(Long bookId, Long userId);
 }

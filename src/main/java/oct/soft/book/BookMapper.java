@@ -3,6 +3,7 @@ package oct.soft.book;
 import org.springframework.stereotype.Service;
 
 import oct.soft.history.BookTransactionHistory;
+import oct.soft.utils.FileUtils;
 
 @Service
 public class BookMapper {
@@ -30,7 +31,7 @@ public class BookMapper {
 				.archived(book.isArchived())
 				.shareable(book.isShareable())
 				.owner(book.getOwner().fullName())
-//				.cover(null)
+				.cover(FileUtils.readFileFromLocation(book.getBookCover()))
 				.build();
 	}
 	

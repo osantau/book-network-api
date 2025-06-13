@@ -2,7 +2,6 @@ package oct.soft.book;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,12 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import oct.soft.common.PageResponse;
 import oct.soft.exception.OperationNotPermittedException;
+import oct.soft.file.FileStorageService;
 import oct.soft.history.BookTransactionHistory;
 import oct.soft.history.BookTransactionHistoryRepository;
 import oct.soft.user.User;
@@ -26,7 +27,8 @@ public class BookService {
 	private final BookRepository bookRepository;
 	private final BookMapper bookMapper;
 	private final BookTransactionHistoryRepository historyRepo;
-
+	private final FileStorageService fileStorageService;
+	
 	public Long save(@Valid BookRequest request, Authentication connectedUser) {
 		User user = ((User) connectedUser.getPrincipal());
 		Book book = bookMapper.toBook(request);
@@ -173,6 +175,16 @@ public class BookService {
 		
 		bookTransactionHistory.setReturnedApproved(true);
 		return historyRepo.save(bookTransactionHistory).getId();
+	}
+
+	public void uploadBookCoverPicture(MultipartFile file, Authentication connectedUser, Long bookId) {
+		
+		Book book = bookRepository.findById(bookId)
+				.orElseThrow(() -> new EntityNotFoundException("No book found with id:: " + bookId));
+		User user = ((User) connectedUser.getPrincipal());
+		var bookCover = fileStorageService.saveFile(file, user.getId());
+		book.setBookCover(bookCover);
+		bookRepository.save(book);
 	}
 
 }

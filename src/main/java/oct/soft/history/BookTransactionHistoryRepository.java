@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
-import oct.soft.book.Book;
-
 public interface BookTransactionHistoryRepository
 		extends JpaRepository<BookTransactionHistory, Long>, JpaSpecificationExecutor<BookTransactionHistory> {
 
@@ -29,7 +27,7 @@ public interface BookTransactionHistoryRepository
 			SELECT (count(*) > 0) as isBorrowed FROM BookTransactionHistory history
 			WHERE history.user.id = :userId
 			AND history.book.id=:bookId
-			AND history.returnApproved=false
+			AND history.returnedApproved=false
 			""")
 	boolean isAlreadyBorrowed(Long bookId, Long userId);
 

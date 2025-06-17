@@ -2,12 +2,12 @@ spring:
   datasource:
    url: jdbc:postgresql://localhost:5432/book_social_network
    username: tavi
-   password: 1234 
+   password: admin86 
    driver-class-name: org.postgresql.Driver	 
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: false
+    show-sql: true
     propreties:
       hibernate:
         format_sql: true

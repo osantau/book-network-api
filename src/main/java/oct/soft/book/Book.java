@@ -2,6 +2,7 @@ package oct.soft.book;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -31,6 +32,7 @@ public class Book extends BaseEntity {
 	private String authorName;
 	private String isbn;
 	private String synopsis;
+	@Column(columnDefinition = "TEXT", nullable = true)
 	private String bookCover;
 	private boolean archived;
 	private boolean shareable;

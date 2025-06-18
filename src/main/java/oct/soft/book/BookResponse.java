@@ -24,4 +24,5 @@ public class BookResponse {
 	private double rate;
 	private boolean archived;
 	private boolean shareable;
+	private String imgBase64;
 }

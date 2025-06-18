@@ -1,5 +1,7 @@
 package oct.soft.book;
 
+import java.util.Base64;
+
 import org.springframework.stereotype.Service;
 
 import oct.soft.history.BookTransactionHistory;
@@ -22,6 +24,11 @@ public class BookMapper {
 	
 	public BookResponse toBookResponse(Book book)
 	{
+		String imgBase64 = null;
+		if(book.getBookCover()!=null)
+		{
+			imgBase64 = Base64.getEncoder().encodeToString(FileUtils.readFileFromLocation(book.getBookCover()));
+		}
 		return BookResponse.builder()
 				.id(book.getId())
 				.title(book.getTitle())
@@ -31,7 +38,9 @@ public class BookMapper {
 				.archived(book.isArchived())
 				.shareable(book.isShareable())
 				.owner(book.getOwner().fullName())
-				.cover(FileUtils.readFileFromLocation(book.getBookCover()))
+//				.cover(FileUtils.readFileFromLocation(book.getBookCover()))
+				.bookCover(book.getBookCover())
+				.imgBase64(imgBase64)
 				.build();
 	}
 	

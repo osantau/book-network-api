@@ -40,6 +40,7 @@ public class BookMapper {
 				.owner(book.getOwner().fullName())
 //				.cover(FileUtils.readFileFromLocation(book.getBookCover()))
 				.bookCover(book.getBookCover())
+				.authorName(book.getAuthorName())
 				.imgBase64(imgBase64)
 				.build();
 	}

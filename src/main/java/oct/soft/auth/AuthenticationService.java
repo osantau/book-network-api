@@ -4,10 +4,14 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import oct.soft.email.EmailService;
+import oct.soft.email.EmailTemplateName;
 import oct.soft.role.RoleRepository;
 import oct.soft.user.Token;
 import oct.soft.user.TokenRepository;
@@ -22,8 +26,11 @@ public class AuthenticationService {
 	private final PasswordEncoder passwordEncoder;
 	private final UserRepository userRepository;
 	private final TokenRepository tokenRepository;
-
-	public void register(RegistrationRequest request) {
+	private final EmailService emailService;
+	@Value("${application.mailing.frontend.activation-url}")
+	private String activationUrl;
+	
+	public void register(RegistrationRequest request) throws MessagingException {
 		var userRole = roleRepository.findByName("USER")
 				.orElseThrow(() -> new IllegalStateException("Role USER was not initalized"));
 		var user = User.builder().firstName(request.getFirstName()).lastName(request.getLastName())
@@ -33,9 +40,9 @@ public class AuthenticationService {
 		sendValidationEmail(user);		
 	}
 
-	private void sendValidationEmail(User user) {
-		var newToken = generateAndSaveActivationToken(user);
-		//send email
+	private void sendValidationEmail(User user) throws MessagingException {
+		var newToken = generateAndSaveActivationToken(user);		
+		emailService.sendEmail(user.getEmail(),user.fullName(),EmailTemplateName.ACTIVATE_ACCOUNT, activationUrl,newToken,"Account activation");
 		
 	}
 

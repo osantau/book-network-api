@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +22,7 @@ public class AuthenticationController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	public ResponseEntity<?> regsiter(@RequestBody @Valid RegistrationRequest request) {
+	public ResponseEntity<?> regsiter(@RequestBody @Valid RegistrationRequest request) throws MessagingException {
 		service.register(request);
 		return ResponseEntity.accepted().build();
 	}

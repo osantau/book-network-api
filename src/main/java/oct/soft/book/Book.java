@@ -2,6 +2,8 @@ package oct.soft.book;
 
 import java.util.List;
 
+import org.springframework.data.annotation.Transient;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -38,4 +40,16 @@ public class Book extends BaseEntity{
 	private List<Feedback> feedbacks;
 	@OneToMany(mappedBy = "book")
 	private List<BookTransactionHistory> histories;
+	
+	@Transient
+	public double getRate() {
+		if(feedbacks ==null || feedbacks.isEmpty())
+		{
+			return 0.0;
+		}
+		
+		var rate = feedbacks.stream().mapToDouble(Feedback::getNote).average().orElse(0.0);
+		double roundedRate = Math.round(rate * 10.0) / 10.0;
+		return roundedRate;
+	}
 }

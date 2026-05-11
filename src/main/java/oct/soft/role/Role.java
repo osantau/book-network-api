@@ -20,6 +20,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import oct.soft.user.User;
 
@@ -27,6 +28,7 @@ import oct.soft.user.User;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "roles")
 @EntityListeners(AuditingEntityListener.class)

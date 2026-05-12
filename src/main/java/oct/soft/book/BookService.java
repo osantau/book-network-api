@@ -97,4 +97,16 @@ public class BookService {
 		return bookId;
 	}
 
+	public Long udpateArchivedStatus(Long bookId, Authentication connectedUser) {
+		Book book = bookRepository.findById(bookId).orElseThrow(()-> new EntityNotFoundException("No book found with ID::  "+bookId));
+		User user = (User) connectedUser.getPrincipal();
+		if(!Objects.equals(user.getId(), book.getOwner().getId()))
+		{
+			throw new OperationNotPermittedException("You cannot update books shareable status !");
+		}
+		book.setArchived(!book.isArchived());
+		bookRepository.save(book);
+		return bookId;
+	}
+
 }

@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import oct.soft.common.PageResponse;
@@ -88,5 +91,11 @@ public class BookController {
 	@PostMapping("/borrow/return/approve/{book-id}")
 	public ResponseEntity<Long> approveReturnBorrowBook(@PathVariable("book-id") Long bookId, Authentication connectedUser) {
 		return ResponseEntity.ok(service.approveReturnBorrowedBook(bookId, connectedUser));
+	}
+	
+	@PostMapping(value="/cover/{book-id}", consumes = "multipart/form-data")
+	public ResponseEntity<?> uploadBookCoverPicture(@PathVariable("book-id") Long bookId, @Parameter() @RequestPart("file") MultipartFile file ,Authentication connectedUser) {
+		service.uploadBookCoverPicture(file, connectedUser, bookId);
+		return ResponseEntity.accepted().build();
 	}
 }

@@ -84,4 +84,9 @@ public class BookController {
 	public ResponseEntity<Long> returnBook(@PathVariable("book-id") Long bookId, Authentication connectedUser) {
 		return ResponseEntity.ok(service.returnBorrowedBook(bookId, connectedUser));
 	}
+	
+	@PostMapping("/borrow/return/approve/{book-id}")
+	public ResponseEntity<Long> approveReturnBorrowBook(@PathVariable("book-id") Long bookId, Authentication connectedUser) {
+		return ResponseEntity.ok(service.approveReturnBorrowedBook(bookId, connectedUser));
+	}
 }

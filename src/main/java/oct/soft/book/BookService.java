@@ -1,6 +1,7 @@
 package oct.soft.book;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import oct.soft.book.history.BookTransactionHistory;
 import oct.soft.book.history.BookTransactionHistoryRepository;
 import oct.soft.common.PageResponse;
+import oct.soft.exception.OperationNotPermittedException;
 import oct.soft.user.User;
 
 @Service
@@ -81,6 +83,18 @@ public class BookService {
 		return new PageResponse<BorrowedBookResponse>(bookResponse, allBorrowedBooks.getNumber(),
 				allBorrowedBooks.getSize(), allBorrowedBooks.getTotalElements(), allBorrowedBooks.getTotalPages(),
 				allBorrowedBooks.isFirst(), allBorrowedBooks.isLast());
+	}
+
+	public Long udpateShareableStatus(Long bookId, Authentication connectedUser) {
+		Book book = bookRepository.findById(bookId).orElseThrow(()-> new EntityNotFoundException("No book found with ID::  "+bookId));
+		User user = (User) connectedUser.getPrincipal();
+		if(!Objects.equals(user.getId(), book.getOwner().getId()))
+		{
+			throw new OperationNotPermittedException("You cannot update books shareable status !");
+		}
+		book.setShareable(!book.isShareable());
+		bookRepository.save(book);
+		return bookId;
 	}
 
 }

@@ -3,6 +3,7 @@ package oct.soft.book;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,4 +62,11 @@ public class BookController {
 			Authentication connectedUser) {
 		return ResponseEntity.ok(service.findAllReturnedBooks(page, size, connectedUser));
 	}
+	
+	@PatchMapping("/shareable/{bookId}")
+	public ResponseEntity<Long> updateShareableStatus(@PathVariable("bookId") Long bookId,Authentication connectedUser)
+	{
+		return ResponseEntity.ok(service.udpateShareableStatus(bookId, connectedUser));
+	}
+	
 }

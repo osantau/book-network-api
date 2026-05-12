@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import oct.soft.book.history.BookTransactionHistory;
+import oct.soft.book.history.BookTransactionHistoryRepository;
 import oct.soft.common.PageResponse;
 import oct.soft.user.User;
 
@@ -20,6 +22,7 @@ import oct.soft.user.User;
 public class BookService {
 	private final BookRepository bookRepository;
 	private final BookMapper bookMapper;
+	private final BookTransactionHistoryRepository bookTransactionHistoryRepository;
 
 	public Long save(@Valid BookRequest request, Authentication connectedUser) {
 
@@ -52,6 +55,19 @@ public class BookService {
 
 		return new PageResponse<BookResponse>(bookResponses, books.getNumber(), books.getSize(),
 				books.getTotalElements(), books.getTotalPages(), books.isFirst(), books.isLast());
+	}
+
+	public PageResponse<BorrowedBookResponse> findAllBorrowedBooks(int page, int size, Authentication connectedUser) {
+		User user = (User) connectedUser.getPrincipal();
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+		Page<BookTransactionHistory> allBorrowedBooks = bookTransactionHistoryRepository.findAllBorrowedBooks(pageable,
+				user.getId());
+		List<BorrowedBookResponse> bookResponse = allBorrowedBooks.stream().map(bookMapper::toBorrowedBookResponse)
+				.toList();
+
+		return new PageResponse<BorrowedBookResponse>(bookResponse, allBorrowedBooks.getNumber(),
+				allBorrowedBooks.getSize(), allBorrowedBooks.getTotalElements(), allBorrowedBooks.getTotalPages(),
+				allBorrowedBooks.isFirst(), allBorrowedBooks.isLast());
 	}
 
 }

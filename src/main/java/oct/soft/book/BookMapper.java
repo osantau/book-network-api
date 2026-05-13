@@ -3,6 +3,7 @@ package oct.soft.book;
 import org.springframework.stereotype.Service;
 
 import oct.soft.book.history.BookTransactionHistory;
+import oct.soft.file.FileUtils;
 
 @Service
 public class BookMapper {
@@ -15,9 +16,8 @@ public class BookMapper {
 	public BookResponse toBookResponse(Book book) {
 		return BookResponse.builder().id(book.getId()).title(book.getTitle()).authorName(book.getAuthorName())
 				.isbn(book.getIsbn()).synopsis(book.getSynopsis()).rate(book.getRate()).archived(book.isArchived())
-				.shareable(book.isShareable()).owner(book.getOwner().fullName())
-				// TODO implement this later
-//				.cover()
+				.shareable(book.isShareable()).owner(book.getOwner().fullName())				
+				.cover(FileUtils.readFileFromLocation(book.getBookCover()))
 				.build();
 	}
 

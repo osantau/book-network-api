@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import oct.soft.book.Book;
-
 @Repository
 public interface BookTransactionHistoryRepository extends JpaRepository<BookTransactionHistory, Long> {
 

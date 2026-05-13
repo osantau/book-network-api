@@ -25,7 +25,7 @@ public interface BookTransactionHistoryRepository extends JpaRepository<BookTran
 			SELECT count(*) > 0 AS isBorrowed FROM BookTransactionHistory history 
 			WHERE history.user.id=:userId 
 			AND history.book.id = :bookId 
-			AND history.returnApproved = false
+			AND history.returnedApproved = false
 			""")
 	boolean isAlreadbyBorrowedByUser(Long bookId, Long userId);
 
@@ -34,16 +34,16 @@ public interface BookTransactionHistoryRepository extends JpaRepository<BookTran
 			WHERE transaction.user.id = :userId 
 			AND transaction.book.id=:bookId 
 			AND transaction.returned=false 
-			AND transaction.returnApproved=false 
+			AND transaction.returnedApproved=false 
 			""")
 	Optional<BookTransactionHistory> findByBookIdAndUserId(Long bookId, Long userId);
 
 	@Query("""
 			SELECT transaction from BookTransactionHistory transaction 
-			WHERE transaction.owner.id = :userId 
+			WHERE transaction.book.owner.id = :userId 
 			AND transaction.book.id=:bookId 
 			AND transaction.returned=true 
-			AND transaction.returnApproved=false 
+			AND transaction.returnedApproved=false 
 			""")
 	Optional<BookTransactionHistory> findByBookIdAndOwnerId(Long bookId, Long userId);
 

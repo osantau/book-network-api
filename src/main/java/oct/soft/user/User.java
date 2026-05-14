@@ -2,17 +2,25 @@ package oct.soft.user;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -23,7 +31,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import oct.soft.book.Book;
 import oct.soft.book.history.BookTransactionHistory;
-import oct.soft.common.BaseEntity;
 import oct.soft.role.Role;
 
 @Getter
@@ -33,10 +40,19 @@ import oct.soft.role.Role;
 @NoArgsConstructor
 @Entity
 @Table(name = "_user")
-public class User extends BaseEntity implements UserDetails, Principal {
+@EntityListeners(AuditingEntityListener.class)
+public class User  implements UserDetails, Principal {
 
 	private static final long serialVersionUID = 1L;
-
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdDate;
+	@LastModifiedDate
+	@Column(insertable = false, updatable = true)
+	private LocalDateTime lastModifiedDate;
 	private String firstName;
 	private String lastName;
 	private LocalDate dateOfBirth;

@@ -33,11 +33,16 @@ public class JwtService {
 		return buildToken(claims, userDetails, jwtExpiration);
 	}
 
-	private String buildToken(Map<String, Object> extraclaims, UserDetails userDetails, Long jwtExpiration) {
+	private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, Long jwtExpiration) {
 		var authorities = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-		return Jwts.builder().claims().add(extraclaims).and().claim("authorities", authorities)
-				.subject(userDetails.getUsername()).issuedAt(new Date(System.currentTimeMillis()))
-				.expiration(new Date(System.currentTimeMillis() + jwtExpiration)).signWith(getSignInKey()).compact();
+		return Jwts.builder()
+				.setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .claim("authorities", authorities)
+                .signWith(getSignInKey())
+                .compact();
 	}
 
 	private Key getSignInKey() {
@@ -71,7 +76,11 @@ public class JwtService {
 	}
 
 	private Claims extractAllClaims(String token) {
-		return Jwts.parser().build().parseSignedClaims(token, getSignInKey().getEncoded()).getPayload();
+		return  Jwts.parserBuilder()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
 	}
 
 }
